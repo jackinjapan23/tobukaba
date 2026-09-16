@@ -510,124 +510,17 @@ td button:hover{border-color:#c9c4ff;background:#f7f6ff}
 
 
 <style id="answer-reveal-design">
-/* ===== Paper-writing answer reveal ===== */
-.answer-reveal-area{
-  margin: 22px auto 18px;
-  max-width: 620px;
-  text-align:center;
-  min-height: 74px;
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  justify-content:center;
-  gap:14px;
-}
-
-.show-answer-btn{
-  appearance:none;
-  border:1px solid rgba(255,255,255,.16);
-  border-radius:16px;
-  padding:13px 22px;
-  font-size:15px;
-  font-weight:800;
-  letter-spacing:.1px;
-  cursor:pointer;
-  color:#fff;
-  background:linear-gradient(135deg,#6366f1,#8b5cf6);
-  box-shadow:0 10px 26px rgba(99,102,241,.25);
-  transition:transform .18s ease, box-shadow .18s ease, filter .18s ease;
-}
-.show-answer-btn:hover{
-  transform:translateY(-2px) scale(1.015);
-  box-shadow:0 15px 32px rgba(99,102,241,.34);
-  filter:saturate(1.08);
-}
-.show-answer-btn:active{
-  transform:translateY(1px) scale(.985);
-}
-.show-answer-btn:focus-visible{
-  outline:3px solid rgba(129,140,248,.45);
-  outline-offset:3px;
-}
-.show-answer-btn.revealed{
-  display:none;
-}
-
-.answer-eye{
-  display:inline-block;
-  margin-right:8px;
-  font-size:14px;
-  transition:transform .35s ease;
-}
-.show-answer-btn:hover .answer-eye{
-  transform:scale(1.2) rotate(-8deg);
-}
-
-.kanji-answer{
-  display:none;
-  width:min(100%,620px);
-  box-sizing:border-box;
-  padding:20px 22px;
-  border-radius:20px;
-  border:1px solid rgba(99,102,241,.22);
-  background:linear-gradient(145deg,rgba(99,102,241,.10),rgba(139,92,246,.07));
-  box-shadow:0 12px 35px rgba(0,0,0,.10), inset 0 1px 0 rgba(255,255,255,.18);
-  overflow:hidden;
-}
-.kanji-answer.visible{
-  display:block;
-  animation:answerReveal .42s cubic-bezier(.2,.8,.2,1) both;
-}
-.kanji-answer .answer-kanji{
-  display:block;
-  font-size:clamp(42px,8vw,68px);
-  line-height:1.15;
-  font-weight:900;
-  letter-spacing:.08em;
-  margin-bottom:7px;
-  animation:kanjiPop .45s .08s cubic-bezier(.2,1.3,.3,1) both;
-}
-.kanji-answer .answer-meta{
-  display:block;
-  font-size:14px;
-  opacity:.72;
-}
-
-.rating-locked{
-  opacity:.42 !important;
-  filter:grayscale(.65);
-  pointer-events:none !important;
-  transform:none !important;
-}
-.rating-unlocked{
-  animation:ratingsUnlock .45s cubic-bezier(.2,.8,.2,1) both;
-}
-
-@keyframes answerReveal{
-  from{opacity:0; transform:translateY(10px) scale(.96); max-height:0;}
-  to{opacity:1; transform:translateY(0) scale(1); max-height:240px;}
-}
-@keyframes kanjiPop{
-  from{opacity:0; transform:scale(.65) translateY(8px);}
-  to{opacity:1; transform:scale(1) translateY(0);}
-}
-@keyframes ratingsUnlock{
-  from{opacity:.42; transform:translateY(8px);}
-  to{opacity:1; transform:translateY(0);}
-}
-
-@media (prefers-reduced-motion:reduce){
-  .answer-reveal-area *, .rating-unlocked, .kanji-answer.visible{
-    animation:none !important;
-    transition:none !important;
-  }
-}
-
-@media (max-width:600px){
-  .answer-reveal-area{margin-top:16px;}
-  .show-answer-btn{width:100%; max-width:320px;}
-  .kanji-answer{padding:18px 14px;}
-}
+.answer-reveal-area{margin:22px auto 18px;max-width:620px;text-align:center;min-height:86px;display:flex;align-items:center;justify-content:center}
+.show-answer-btn{appearance:none;width:min(100%,420px);min-height:76px;border:1px dashed rgba(99,102,241,.42);border-radius:18px;padding:14px 22px;font-size:15px;font-weight:800;cursor:default;color:inherit;background:rgba(99,102,241,.06);transition:transform .18s ease,box-shadow .18s ease,background .18s ease}
+.show-answer-btn:hover,.show-answer-btn.peek-active,.show-answer-btn.keyboard-peek{transform:translateY(-2px);background:rgba(99,102,241,.10);box-shadow:0 12px 28px rgba(0,0,0,.10)}
+.peek-prompt{display:block;opacity:.72}.peek-hint{display:block;font-size:12px;font-weight:600;opacity:.52;margin-top:5px}
+.answer-content{display:none}.show-answer-btn:hover .peek-prompt,.show-answer-btn.peek-active .peek-prompt,.show-answer-btn.keyboard-peek .peek-prompt,.show-answer-btn:hover .peek-hint,.show-answer-btn.peek-active .peek-hint,.show-answer-btn.keyboard-peek .peek-hint{display:none}
+.show-answer-btn:hover .answer-content,.show-answer-btn.peek-active .answer-content,.show-answer-btn.keyboard-peek .answer-content{display:block;animation:answerReveal .18s ease both}
+.answer-kanji{display:block;font-size:clamp(42px,8vw,68px);line-height:1.15;font-weight:900;letter-spacing:.08em}
+.undo-row{display:flex;justify-content:center;margin:4px 0 14px}.undo-btn{border:1px solid rgba(100,116,139,.28);border-radius:12px;padding:9px 16px;font-size:13px;font-weight:750;cursor:pointer;background:transparent;color:inherit;transition:transform .15s ease,opacity .15s ease}.undo-btn:hover:not(:disabled){transform:translateY(-1px)}.undo-btn:disabled{opacity:.35;cursor:not-allowed}
+@keyframes answerReveal{from{opacity:0;transform:scale(.92)}to{opacity:1;transform:scale(1)}}
+@media (prefers-reduced-motion:reduce){.answer-reveal-area *,.answer-content{animation:none!important;transition:none!important}}
+@media (max-width:600px){.answer-reveal-area{margin-top:16px}.show-answer-btn{width:100%;min-height:82px}}
 </style>
 
 </head>
@@ -782,11 +675,14 @@ Start Review
 
 
         <div class="answer-reveal-area" id="answerRevealArea">
-          <button class="show-answer-btn" id="showAnswerBtn" type="button" onclick="showKanjiAnswer()">
-            <span class="answer-eye">◉</span>
-            <span>Show Answer</span>
+          <button class="show-answer-btn" id="showAnswerBtn" type="button" aria-label="Hover or touch and hold to peek at the Kanji">
+            <span class="peek-prompt">👁️ Hover to peek</span>
+            <span class="peek-hint">Touch and hold • Space to toggle</span>
+            <span class="answer-content" id="kanjiAnswer" aria-live="polite"></span>
           </button>
-          <div class="kanji-answer" id="kanjiAnswer" aria-live="polite"></div>
+        </div>
+        <div class="undo-row">
+          <button class="undo-btn" id="undoButton" type="button" onclick="undoLastRating()" disabled>← Back / Undo last rating</button>
         </div>
         <div class="rating-buttons">
 
@@ -831,7 +727,9 @@ Start Review
 
 <p id="quizResult"></p>
 
-<button class="primary-btn" onclick="showPage('dashboard')">
+<button class="primary-btn" onclick="restartQuiz()">🔄 Review These Words Again</button>
+
+    <button class="primary-btn" onclick="showPage('dashboard')">
 Back to Dashboard
 </button>
 
@@ -1458,6 +1356,7 @@ let stats = JSON.parse(localStorage.getItem("kanjiStats")) || {
 let quizWords = [];
 
 let quizIndex = 0;
+let lastQuizState = null;
 
 
 /* =========================================================
@@ -2793,129 +2692,28 @@ updateAll();
 
 <script id="answer-reveal-logic">
 (function(){
-  function getRatingButtons(){
-    return Array.from(document.querySelectorAll(
-      'button[onclick*="rateWord"], button[data-rating], .rating button, .rating-buttons button'
-    ));
-  }
+  const btn=()=>document.getElementById("showAnswerBtn"), target=()=>document.getElementById("kanjiAnswer"), undo=()=>document.getElementById("undoButton");
+  function esc(x){return String(x).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#039;"}[c]));}
+  function render(){const b=btn(),t=target();if(!b||!t)return;const w=(typeof quizWords!=="undefined")?quizWords[quizIndex]:null;t.innerHTML='<span class="answer-kanji">'+esc(w&&w.kanji?w.kanji:"—")+'</span>';}
+  window.resetAnswerReveal=function(){const b=btn();if(b)b.classList.remove("peek-active","keyboard-peek");render();if(undo())undo().disabled=!lastQuizState;};
+  window.showKanjiAnswer=function(){const b=btn();if(b)b.classList.add("keyboard-peek");};
 
-  window.lockRatingButtons = function(){
-    getRatingButtons().forEach(function(btn){
-      btn.classList.add("rating-locked");
-      btn.classList.remove("rating-unlocked");
-      btn.setAttribute("aria-disabled","true");
-    });
-  };
+  document.addEventListener("pointerdown",e=>{const b=btn();if(b&&e.target.closest("#showAnswerBtn")===b&&(e.pointerType==="touch"||e.pointerType==="pen"))b.classList.add("peek-active");});
+  document.addEventListener("pointerup",e=>{const b=btn();if(b&&(e.pointerType==="touch"||e.pointerType==="pen"))b.classList.remove("peek-active");});
+  document.addEventListener("pointercancel",()=>{const b=btn();if(b)b.classList.remove("peek-active");});
 
-  window.unlockRatingButtons = function(){
-    getRatingButtons().forEach(function(btn){
-      btn.classList.remove("rating-locked");
-      btn.classList.add("rating-unlocked");
-      btn.removeAttribute("aria-disabled");
-    });
-  };
+  document.addEventListener("keydown",e=>{const q=document.getElementById("quizArea");if(!q||q.style.display==="none"||e.target.matches("input,textarea,select"))return;if(e.key===" "&&!e.target.matches("button")){e.preventDefault();const b=btn();if(b)b.classList.toggle("keyboard-peek");}else if(e.key==="Escape"){const b=btn();if(b)b.classList.remove("keyboard-peek","peek-active");}});
+  document.addEventListener("keydown",e=>{const q=document.getElementById("quizArea");if(!q||q.style.display==="none"||e.target.matches("input,textarea,select,button"))return;if(e.key==="1")rateWord("again");else if(e.key==="2")rateWord("hard");else if(e.key==="3")rateWord("good");else if(e.key==="4")rateWord("easy");else if(e.key==="ArrowLeft")undoLastRating();});
 
-  window.showKanjiAnswer = function(){
-    var area = document.getElementById("kanjiAnswer");
-    var button = document.getElementById("showAnswerBtn");
-    if(!area || !button) return;
+  const originalRateWord=window.rateWord;
+  if(typeof originalRateWord==="function")window.rateWord=function(rating){if(typeof quizWords==="undefined"||!quizWords[quizIndex])return;lastQuizState={index:quizIndex,wordSnapshot:JSON.parse(JSON.stringify(quizWords[quizIndex])),statsSnapshot:JSON.parse(JSON.stringify(stats))};originalRateWord(rating);if(undo())undo().disabled=false;};
 
-    // Try the common quiz globals/objects used by the existing app.
-    // quizWords and quizIndex are the actual variables used by the
-    // original SRS quiz. They are top-level let variables, so they are
-    // accessible here even though they are not properties of window.
-    var word = null;
+  window.undoLastRating=function(){if(!lastQuizState)return;const st=lastQuizState;if(quizWords[st.index])Object.assign(quizWords[st.index],st.wordSnapshot);stats=JSON.parse(JSON.stringify(st.statsSnapshot));quizIndex=st.index;document.getElementById("quizFinished").style.display="none";document.getElementById("quizArea").style.display="block";lastQuizState=null;showQuizWord();resetAnswerReveal();};
+  window.restartQuiz=function(){if(!quizWords||!quizWords.length)return;quizIndex=0;lastQuizState=null;document.getElementById("quizFinished").style.display="none";document.getElementById("quizArea").style.display="block";showQuizWord();resetAnswerReveal();};
 
-    if (typeof quizWords !== "undefined" &&
-        typeof quizIndex !== "undefined" &&
-        quizWords[quizIndex]) {
-      word = quizWords[quizIndex];
-    }
-
-    // Fallbacks for compatibility with other versions of the quiz.
-    if(!word) word = window.currentWord || window.currentQuizWord || window.quizWord || null;
-
-    if(!word && Array.isArray(window.quizWords) && typeof window.currentQuizIndex === "number"){
-      word = window.quizWords[window.currentQuizIndex];
-    }
-
-    var kanji = word && word.kanji ? word.kanji : "";
-    var hira = word && word.hiragana ? word.hiragana : "";
-    var english = word && (word.english || word.meaning) ? (word.english || word.meaning) : "";
-
-    // If the existing quiz already has a hidden/answer element, use its text as a fallback.
-    if(!kanji){
-      var existing = document.querySelector("#answer, .correct-answer, .quiz-answer, [data-answer]");
-      if(existing) kanji = existing.textContent.trim();
-    }
-
-    area.innerHTML =
-      '<span class="answer-kanji">' + escapeHtml(kanji || "—") + '</span>' +
-      '<span class="answer-meta">' +
-      (english ? escapeHtml(english) : "") +
-      (hira ? (english ? " · " : "") + escapeHtml(hira) : "") +
-      '</span>';
-
-    area.classList.add("visible");
-    button.classList.add("revealed");
-    unlockRatingButtons();
-  };
-
-  function escapeHtml(str){
-    return String(str).replace(/[&<>"']/g,function(c){
-      return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[c];
-    });
-  }
-
-  // Re-lock for each new quiz card. Patch the existing quiz functions without
-  // changing their SRS logic.
-  var oldNextQuiz = window.nextQuiz;
-  if(typeof oldNextQuiz === "function"){
-    window.nextQuiz = function(){
-      var result = oldNextQuiz.apply(this, arguments);
-      setTimeout(window.resetAnswerReveal, 0);
-      return result;
-    };
-  }
-
-  var oldFinishQuiz = window.finishQuiz;
-  if(typeof oldFinishQuiz === "function"){
-    window.finishQuiz = function(){
-      return oldFinishQuiz.apply(this, arguments);
-    };
-  }
-
-  window.resetAnswerReveal = function(){
-    var area = document.getElementById("kanjiAnswer");
-    var button = document.getElementById("showAnswerBtn");
-    if(area){
-      area.classList.remove("visible");
-      area.innerHTML = "";
-    }
-    if(button){
-      button.classList.remove("revealed");
-    }
-    lockRatingButtons();
-  };
-
-  // Start locked.
-  document.addEventListener("DOMContentLoaded", function(){
-    setTimeout(function(){
-      lockRatingButtons();
-    }, 50);
-  });
-
-  // Observe the study area so the lock/reveal resets when the quiz content changes.
-  var observer = new MutationObserver(function(){
-    var area = document.getElementById("kanjiAnswer");
-    if(area && !area.classList.contains("visible")){
-      lockRatingButtons();
-    }
-  });
-  document.addEventListener("DOMContentLoaded", function(){
-    var study = document.getElementById("study");
-    if(study) observer.observe(study, {childList:true, subtree:true});
-  });
+  const originalShowQuizWord=window.showQuizWord;
+  if(typeof originalShowQuizWord==="function")window.showQuizWord=function(){const r=originalShowQuizWord.apply(this,arguments);setTimeout(resetAnswerReveal,0);return r;};
+  document.addEventListener("DOMContentLoaded",()=>{render();resetAnswerReveal();});
 })();
 </script>
 
