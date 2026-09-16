@@ -1399,8 +1399,11 @@ let stats = JSON.parse(localStorage.getItem("kanjiStats")) || {
 ========================================================= */
 
 let quizWords = [];
+// Number of distinct cards originally loaded into this session.
+// Relearning retries do not increase this count.
+let quizOriginalCount = 0;
 
-// Cards rated Hard/Again are placed back into the current session.
+ // Cards rated Hard/Again are placed back into the current session.
 // The retry is a confirmation attempt: it does not give the card a
 // second SRS progression step. It must be passed before the session ends.
 let quizRelearningIndexes = new Set();
@@ -1542,6 +1545,7 @@ function startQuiz() {
     // that are genuinely due RIGHT NOW. Reviewed words cannot re-enter
     // until their SRS nextReviewAt timestamp has arrived.
     quizWords = [];
+    quizOriginalCount = 0;
     quizRelearningIndexes = new Set();
     quizIndex = 0;
     lastQuizState = null;
@@ -1570,6 +1574,7 @@ function startQuiz() {
     );
 
     quizWords = dueWords.slice(0, quizSize);
+    quizOriginalCount = quizWords.length;
 
     if (quizWords.length === 0) {
         document.getElementById("quizFinished").style.display = "block";
@@ -1600,9 +1605,13 @@ function showQuizWord() {
 
     const word = quizWords[quizIndex];
 
+    const isRetry = quizRelearningIndexes.has(quizIndex);
+    const displayNumber = Math.min(quizIndex + 1, quizOriginalCount);
+
     document.getElementById("quizCounter")
-        .textContent =
-        `Word ${quizIndex + 1} of ${quizWords.length}`;
+        .textContent = isRetry
+        ? `🔁 Retry • Word ${displayNumber} of ${quizOriginalCount}`
+        : `Word ${displayNumber} of ${quizOriginalCount}`;
 
     document.getElementById("quizEnglish")
         .textContent = word.english;
@@ -1871,8 +1880,11 @@ function finishQuiz() {
     const canStartAnotherChunk = remainingGoal > 0 && dueRemaining > 0;
 
     let message =
-        `You reviewed ${quizWords.length} ${quizWords.length === 1 ? "word" : "words"} in this chunk.<br><br>` +
-        `${todayReviews} / ${userSettings.dailyGoal} daily reviews completed.`;
+        `You reviewed ${quizOriginalCount} ${quizOriginalCount === 1 ? "word" : "words"} in this chunk.` +
+        (quizWords.length > quizOriginalCount
+            ? `<br>🔁 ${quizWords.length - quizOriginalCount} retry ${quizWords.length - quizOriginalCount === 1 ? "attempt was" : "attempts were"} included for Hard/Failure cards.`
+            : "") +
+        `<br><br>${todayReviews} / ${userSettings.dailyGoal} daily reviews completed.`;
 
     if (remainingGoal <= 0) {
         message += `<br><br>🎯 Daily goal reached!`;
@@ -2601,6 +2613,7 @@ function resetQuizScreen() {
     // If the daily goal changes after reaching the old goal,
     // the old "goal reached" screen must not stay locked on screen.
     quizWords = [];
+    quizOriginalCount = 0;
     quizIndex = 0;
     lastQuizState = null;
 
@@ -3040,6 +3053,7 @@ function resetAll() {
 
     // Clear any active/finished quiz so reset really returns the app to a clean state.
     quizWords = [];
+    quizOriginalCount = 0;
     quizIndex = 0;
     lastQuizState = null;
     document.getElementById("quizArea").style.display = "none";
