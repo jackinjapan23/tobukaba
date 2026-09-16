@@ -1907,6 +1907,8 @@ function addWord() {
 
         dueDate: today(),
 
+        nextReviewAt: new Date().toISOString(),
+
         lastReviewed: null
 
     });
@@ -2704,10 +2706,49 @@ function importData(event) {
             }
 
 
-            words = backup.words;
+            // Restore and normalize backup data so older backups remain compatible.
+            words = backup.words.map(word => ({
+                ...word,
+                correctCount: Number(word.correctCount) || 0,
+                failCount: Number(word.failCount) || 0,
+                dueDate: word.dueDate ?? today(),
+                nextReviewAt: word.nextReviewAt ?? (word.dueDate
+                    ? new Date(word.dueDate + "T00:00:00").toISOString()
+                    : new Date().toISOString()),
+                jlpt: word.jlpt ?? "Unknown",
+                category: word.category ?? "Other",
+                pos: word.pos ?? "Other",
+                lastReviewed: word.lastReviewed ?? null
+            }));
 
-            stats = backup.stats;
+            stats = {
+                totalReviews: Number(backup.stats.totalReviews) || 0,
+                successfulReviews: Number(backup.stats.successfulReviews) || 0,
+                totalFailures: Number(backup.stats.totalFailures) || 0,
+                xp: Number(backup.stats.xp) || 0,
+                reviewHistory: backup.stats.reviewHistory || {},
+                lastStudyDate: backup.stats.lastStudyDate ?? null,
+                streak: Number(backup.stats.streak) || 0
+            };
 
+            if (backup.settings) {
+                userSettings = {
+                    dailyGoal: Math.max(1, Math.min(500, parseInt(backup.settings.dailyGoal, 10) || DEFAULT_SETTINGS.dailyGoal)),
+                    chunkSize: Math.max(1, Math.min(100, parseInt(backup.settings.chunkSize, 10) || DEFAULT_SETTINGS.chunkSize))
+                };
+                localStorage.setItem("kanjiSRSSettings", JSON.stringify(userSettings));
+            } else {
+                userSettings = { ...DEFAULT_SETTINGS };
+                localStorage.removeItem("kanjiSRSSettings");
+            }
+
+            // The current quiz belongs to the old data.
+            quizWords = [];
+            quizIndex = 0;
+            lastQuizState = null;
+            document.getElementById("quizArea").style.display = "none";
+            document.getElementById("quizFinished").style.display = "none";
+            document.getElementById("quizStart").style.display = "block";
 
             saveData();
 
@@ -2792,12 +2833,19 @@ function resetAll() {
 
     };
 
+    // Clear any active/finished quiz so reset really returns the app to a clean state.
+    quizWords = [];
+    quizIndex = 0;
+    lastQuizState = null;
+    document.getElementById("quizArea").style.display = "none";
+    document.getElementById("quizFinished").style.display = "none";
+    document.getElementById("quizStart").style.display = "block";
 
     saveData();
-
+    localStorage.setItem("kanjiSRSSettings", JSON.stringify(userSettings));
     updateAll();
 
-    alert("Everything has been reset.");
+    alert("Everything has been reset. Your default words are due now and ready to study.");
 
 }
 
@@ -2844,9 +2892,50 @@ updateAll();
   document.addEventListener("keydown",e=>{const q=document.getElementById("quizArea");if(!q||q.style.display==="none"||e.target.matches("input,textarea,select,button"))return;if(e.key==="1")rateWord("again");else if(e.key==="2")rateWord("hard");else if(e.key==="3")rateWord("good");else if(e.key==="4")rateWord("easy");else if(e.key==="ArrowLeft")undoLastRating();});
 
   const originalRateWord=window.rateWord;
-  if(typeof originalRateWord==="function")window.rateWord=function(rating){if(typeof quizWords==="undefined"||!quizWords[quizIndex])return;lastQuizState={index:quizIndex,wordSnapshot:JSON.parse(JSON.stringify(quizWords[quizIndex])),statsSnapshot:JSON.parse(JSON.stringify(stats))};originalRateWord(rating);if(undo())undo().disabled=false;};
+  if(typeof originalRateWord==="function")window.rateWord=function(rating){
+    if(typeof quizWords==="undefined"||!quizWords[quizIndex])return;
 
-  window.undoLastRating=function(){if(!lastQuizState)return;const st=lastQuizState;if(quizWords[st.index])Object.assign(quizWords[st.index],st.wordSnapshot);stats=JSON.parse(JSON.stringify(st.statsSnapshot));quizIndex=st.index;document.getElementById("quizFinished").style.display="none";document.getElementById("quizArea").style.display="block";lastQuizState=null;showQuizWord();resetAnswerReveal();};
+    const currentWord=quizWords[quizIndex];
+    const wordKey={kanji:currentWord.kanji,hiragana:currentWord.hiragana};
+    const persistentWord=words.find(w=>w.kanji===wordKey.kanji&&w.hiragana===wordKey.hiragana);
+    const previousPersistentWord=persistentWord?JSON.parse(JSON.stringify(persistentWord)):null;
+    const previousQuizWord=JSON.parse(JSON.stringify(currentWord));
+    const previousStats=JSON.parse(JSON.stringify(stats));
+    const previousIndex=quizIndex;
+    const previousTotalReviews=stats.totalReviews;
+
+    originalRateWord(rating);
+
+    // Only enable Undo when a review was actually recorded.
+    if(stats.totalReviews>previousTotalReviews){
+      lastQuizState={index:previousIndex,wordKey,wordSnapshot:previousQuizWord,persistentWordSnapshot:previousPersistentWord,statsSnapshot:previousStats};
+      if(undo())undo().disabled=false;
+    }else{
+      lastQuizState=null;
+      if(undo())undo().disabled=true;
+    }
+  };
+
+  window.undoLastRating=function(){
+    if(!lastQuizState)return;
+    const st=lastQuizState;
+
+    // Restore the actual saved word as well as the temporary quiz copy.
+    if(st.persistentWordSnapshot){
+      const i=words.findIndex(w=>w.kanji===st.wordKey.kanji&&w.hiragana===st.wordKey.hiragana);
+      if(i!==-1)words[i]=JSON.parse(JSON.stringify(st.persistentWordSnapshot));
+    }
+    if(quizWords[st.index])Object.assign(quizWords[st.index],st.wordSnapshot);
+    stats=JSON.parse(JSON.stringify(st.statsSnapshot));
+    quizIndex=st.index;
+    saveData();
+    updateAll();
+    document.getElementById("quizFinished").style.display="none";
+    document.getElementById("quizArea").style.display="block";
+    lastQuizState=null;
+    showQuizWord();
+    resetAnswerReveal();
+  };
   window.restartQuiz=function(){startQuiz();resetAnswerReveal();};
 
   const originalShowQuizWord=window.showQuizWord;
