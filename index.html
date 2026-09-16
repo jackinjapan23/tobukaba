@@ -801,7 +801,8 @@ oninput="renderVocabulary()"
 
 <select id="statusFilter" onchange="renderVocabulary()">
 <option value="">All Statuses</option>
-<option value="due">Due</option>
+<option value="new">New</option>
+<option value="due">Due now</option>
 <option value="learning">Learning</option>
 <option value="burned">Burned</option>
 <option value="leech">Problem Words</option>
@@ -2085,6 +2086,14 @@ function getNextReviewTime(word) {
     return Number.isFinite(fallback) ? fallback : Date.now();
 }
 
+function isNewWord(word) {
+    return !word.lastReviewed;
+}
+
+function isDueReview(word) {
+    return !isNewWord(word) && isDue(word);
+}
+
 function formatNextDue(word) {
     if (isBurned(word)) {
         return `<span class="badge burned">Never</span>`;
@@ -2097,8 +2106,12 @@ function formatNextDue(word) {
         return "—";
     }
 
+    if (isNewWord(word)) {
+        return `<span class="badge">🆕 New</span>`;
+    }
+
     if (timestamp <= Date.now()) {
-        return `<span class="badge">Due now</span>`;
+        return `<span class="badge">🔴 Due now</span>`;
     }
 
     const now = new Date();
@@ -2163,9 +2176,15 @@ function renderVocabulary() {
         let matchesStatus = true;
 
 
-        if (status === "due") {
+        if (status === "new") {
 
-            matchesStatus = isDue(word);
+            matchesStatus = isNewWord(word);
+
+        }
+
+        else if (status === "due") {
+
+            matchesStatus = isDueReview(word);
 
         }
 
@@ -2173,6 +2192,7 @@ function renderVocabulary() {
 
             matchesStatus =
                 !isBurned(word) &&
+                !isNewWord(word) &&
                 !isDue(word);
 
         }
@@ -2526,15 +2546,45 @@ function renderStudySettings() {
 }
 
 
+function resetQuizScreen() {
+    // If the daily goal changes after reaching the old goal,
+    // the old "goal reached" screen must not stay locked on screen.
+    quizWords = [];
+    quizIndex = 0;
+    lastQuizState = null;
+
+    const quizStart = document.getElementById("quizStart");
+    const quizArea = document.getElementById("quizArea");
+    const quizFinished = document.getElementById("quizFinished");
+
+    if (quizStart) quizStart.style.display = "block";
+    if (quizArea) quizArea.style.display = "none";
+    if (quizFinished) quizFinished.style.display = "none";
+
+    updateNextChunkButton(false);
+    if (typeof resetAnswerReveal === "function") resetAnswerReveal();
+}
+
+
 function saveStudySettings() {
 
     const daily = Math.max(1, Math.min(500, parseInt(document.getElementById("dailyGoalInput").value, 10) || DEFAULT_SETTINGS.dailyGoal));
     const chunk = Math.max(1, Math.min(100, parseInt(document.getElementById("chunkSizeInput").value, 10) || DEFAULT_SETTINGS.chunkSize));
 
+    const oldDailyGoal = userSettings.dailyGoal;
+
     userSettings.dailyGoal = daily;
     userSettings.chunkSize = chunk;
 
     localStorage.setItem("kanjiSRSSettings", JSON.stringify(userSettings));
+
+    // IMPORTANT:
+    // If the goal was changed (for example 5 -> 10), clear the old
+    // "Daily goal reached" screen. startQuiz() will then use the NEW
+    // daily goal and can offer any genuinely due/new words.
+    if (daily !== oldDailyGoal) {
+        resetQuizScreen();
+    }
 
     renderStudySettings();
     updateAll();
