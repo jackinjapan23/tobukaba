@@ -1669,6 +1669,10 @@ function rateWord(rating) {
 
     saveData();
 
+    // Immediately refresh dashboard/statistics so a new failure
+    // appears in "Most Failed Words" without a page reload.
+    updateAll();
+
     quizIndex++;
 
     if (quizIndex >= quizWords.length) {
@@ -2140,12 +2144,10 @@ function updateCategoryFilter() {
 
 function getTopFailures() {
 
+    // Only include words that have actually been failed.
     return [...words]
-
-        .sort((a,b) =>
-            b.failCount - a.failCount
-        )
-
+        .filter(word => Number(word.failCount) > 0)
+        .sort((a,b) => Number(b.failCount) - Number(a.failCount))
         .slice(0,10);
 
 }
@@ -2156,6 +2158,8 @@ function renderFailureList(elementId) {
     const container =
         document.getElementById(elementId);
 
+    if (!container) return;
+
     const top =
         getTopFailures();
 
@@ -2163,8 +2167,6 @@ function renderFailureList(elementId) {
 
 
     top.forEach((word, index) => {
-
-        if (word.failCount === 0) return;
 
         const div =
             document.createElement("div");
