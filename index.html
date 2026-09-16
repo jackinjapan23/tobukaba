@@ -753,7 +753,7 @@ Start Review
 
 <p id="quizResult"></p>
 
-<button class="primary-btn" onclick="restartQuiz()">🔄 Review These Words Again</button>
+<button class="primary-btn" id="nextChunkButton" onclick="startQuiz()">▶️ Start Next Chunk</button>
 
     <button class="primary-btn" onclick="showPage('dashboard')">
 Back to Dashboard
@@ -807,6 +807,12 @@ oninput="renderVocabulary()"
 <option value="leech">Problem Words</option>
 </select>
 
+<select id="sortFilter" onchange="renderVocabulary()">
+<option value="default">Sort: Default</option>
+<option value="dueSoonest">Next Due: Soonest</option>
+<option value="dueLatest">Next Due: Latest</option>
+</select>
+
 </div>
 
 </div>
@@ -828,6 +834,7 @@ oninput="renderVocabulary()"
 <th>Category</th>
 <th>Progress</th>
 <th>Failures</th>
+<th>Next Due</th>
 <th>Actions</th>
 </tr>
 
@@ -1525,42 +1532,61 @@ function startQuiz() {
 
     const remaining = getRemainingDailyReviews();
 
+    // Starting a new chunk always creates a fresh queue from the words
+    // that are genuinely due RIGHT NOW. Reviewed words cannot re-enter
+    // until their SRS nextReviewAt timestamp has arrived.
+    quizWords = [];
     quizIndex = 0;
     lastQuizState = null;
 
     document.getElementById("quizStart").style.display = "none";
+    document.getElementById("quizArea").style.display = "none";
     document.getElementById("quizFinished").style.display = "none";
 
     if (remaining <= 0) {
-        document.getElementById("quizArea").style.display = "none";
         document.getElementById("quizFinished").style.display = "block";
         document.getElementById("quizResult").innerHTML =
-            `🎯 Daily goal reached!<br><br>You completed ${getTodayReviews()} / ${userSettings.dailyGoal} reviews today.<br>Come back tomorrow for more practice.`;
+            `🎯 Daily goal reached!<br><br>You completed ${getTodayReviews()} / ${userSettings.dailyGoal} reviews today.<br><br>Come back tomorrow for more practice.`;
+        updateNextChunkButton(false);
+        resetAnswerReveal();
         return;
     }
 
-    // Only words that are genuinely due can enter a new quiz.
-    // A word that was just reviewed gets a future nextReviewAt timestamp,
-    // so it cannot be selected again before its interval expires.
     const dueWords = words
         .filter(word => isDue(word))
         .sort(() => Math.random() - 0.5);
 
-    const quizSize = Math.min(userSettings.chunkSize, remaining, dueWords.length);
+    const quizSize = Math.min(
+        userSettings.chunkSize,
+        remaining,
+        dueWords.length
+    );
+
     quizWords = dueWords.slice(0, quizSize);
 
     if (quizWords.length === 0) {
-        document.getElementById("quizArea").style.display = "none";
         document.getElementById("quizFinished").style.display = "block";
         document.getElementById("quizResult").innerHTML =
-            "🎉 No words are currently due!<br><br>Your reviewed words are locked until their next review time.";
+            `🎉 No words are currently due!<br><br>` +
+            `Your reviewed words are locked until their next review time.<br><br>` +
+            `You have completed ${getTodayReviews()} / ${userSettings.dailyGoal} reviews today.`;
+        updateNextChunkButton(false);
+        resetAnswerReveal();
         return;
     }
 
     document.getElementById("quizArea").style.display = "block";
+    updateNextChunkButton(false);
     showQuizWord();
 
 }
+
+function updateNextChunkButton(show) {
+    const button = document.getElementById("nextChunkButton");
+    if (!button) return;
+    button.style.display = show ? "inline-block" : "none";
+}
+
 
 
 function showQuizWord() {
@@ -1784,21 +1810,33 @@ function rateWord(rating) {
 
 function finishQuiz() {
 
-    document.getElementById("quizArea")
-        .style.display = "none";
+    document.getElementById("quizArea").style.display = "none";
+    document.getElementById("quizFinished").style.display = "block";
 
-    document.getElementById("quizFinished")
-        .style.display = "block";
+    const todayReviews = getTodayReviews();
+    const remainingGoal = getRemainingDailyReviews();
+    const dueRemaining = words.filter(word => isDue(word)).length;
+    const canStartAnotherChunk = remainingGoal > 0 && dueRemaining > 0;
 
-    document.getElementById("quizResult")
-        .innerHTML =
-        `You reviewed ${quizWords.length} words in this chunk.<br><br>
-         ⭐ +${quizWords.reduce((sum, word) => sum + 1, 0)} XP minimum<br>
-         ${getTodayReviews()} / ${userSettings.dailyGoal} daily reviews completed.`;
+    let message =
+        `You reviewed ${quizWords.length} ${quizWords.length === 1 ? "word" : "words"} in this chunk.<br><br>` +
+        `${todayReviews} / ${userSettings.dailyGoal} daily reviews completed.`;
 
+    if (remainingGoal <= 0) {
+        message += `<br><br>🎯 Daily goal reached!`;
+    } else if (dueRemaining > 0) {
+        message += `<br><br>📚 ${dueRemaining} more ${dueRemaining === 1 ? "word is" : "words are"} currently due.`;
+    } else {
+        message += `<br><br>🎉 No more words are currently due.`;
+    }
+
+    document.getElementById("quizResult").innerHTML = message;
+    updateNextChunkButton(canStartAnotherChunk);
+    resetAnswerReveal();
     updateAll();
 
 }
+
 
 
 /* =========================================================
@@ -2035,6 +2073,58 @@ function saveEdit() {
    VOCABULARY TABLE
 ========================================================= */
 
+function getNextReviewTime(word) {
+    if (isBurned(word)) return Infinity;
+
+    if (word.nextReviewAt) {
+        const time = new Date(word.nextReviewAt).getTime();
+        if (Number.isFinite(time)) return time;
+    }
+
+    const fallback = new Date((word.dueDate || today()) + "T00:00:00").getTime();
+    return Number.isFinite(fallback) ? fallback : Date.now();
+}
+
+function formatNextDue(word) {
+    if (isBurned(word)) {
+        return `<span class="badge burned">Never</span>`;
+    }
+
+    const timestamp = getNextReviewTime(word);
+    const date = new Date(timestamp);
+
+    if (!Number.isFinite(timestamp) || Number.isNaN(date.getTime())) {
+        return "—";
+    }
+
+    if (timestamp <= Date.now()) {
+        return `<span class="badge">Due now</span>`;
+    }
+
+    const now = new Date();
+    const isToday = date.toDateString() === now.toDateString();
+    const tomorrow = new Date(now);
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    const isTomorrow = date.toDateString() === tomorrow.toDateString();
+
+    const timeText = date.toLocaleTimeString([], {
+        hour: "numeric",
+        minute: "2-digit"
+    });
+
+    if (isToday) return `Today, ${timeText}`;
+    if (isTomorrow) return `Tomorrow, ${timeText}`;
+
+    const dateText = date.toLocaleDateString([], {
+        year: "numeric",
+        month: "short",
+        day: "numeric"
+    });
+
+    return `${dateText}, ${timeText}`;
+}
+
+
 function renderVocabulary() {
 
     const search =
@@ -2115,6 +2205,16 @@ function renderVocabulary() {
     });
 
 
+    const sort =
+        document.getElementById("sortFilter")?.value || "default";
+
+    if (sort === "dueSoonest") {
+        filtered.sort((a, b) => getNextReviewTime(a) - getNextReviewTime(b));
+    } else if (sort === "dueLatest") {
+        filtered.sort((a, b) => getNextReviewTime(b) - getNextReviewTime(a));
+    }
+
+
     const tbody =
         document.getElementById("vocabularyTable");
 
@@ -2173,6 +2273,8 @@ function renderVocabulary() {
 <td>${progress}</td>
 
 <td>${failureDisplay}</td>
+
+<td>${formatNextDue(word)}</td>
 
 <td>
 
@@ -2749,6 +2851,8 @@ function importData(event) {
             document.getElementById("quizArea").style.display = "none";
             document.getElementById("quizFinished").style.display = "none";
             document.getElementById("quizStart").style.display = "block";
+            updateNextChunkButton(false);
+            if (typeof resetAnswerReveal === "function") resetAnswerReveal();
 
             saveData();
 
@@ -2840,6 +2944,8 @@ function resetAll() {
     document.getElementById("quizArea").style.display = "none";
     document.getElementById("quizFinished").style.display = "none";
     document.getElementById("quizStart").style.display = "block";
+    updateNextChunkButton(false);
+    if (typeof resetAnswerReveal === "function") resetAnswerReveal();
 
     saveData();
     localStorage.setItem("kanjiSRSSettings", JSON.stringify(userSettings));
@@ -2936,7 +3042,7 @@ updateAll();
     showQuizWord();
     resetAnswerReveal();
   };
-  window.restartQuiz=function(){startQuiz();resetAnswerReveal();};
+  window.restartQuiz=function(){startQuiz();};
 
   const originalShowQuizWord=window.showQuizWord;
   if(typeof originalShowQuizWord==="function")window.showQuizWord=function(){const r=originalShowQuizWord.apply(this,arguments);setTimeout(resetAnswerReveal,0);return r;};
