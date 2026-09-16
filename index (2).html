@@ -1,0 +1,2920 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Kanji Writing SRS</title>
+
+<style>
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    background: #f4f5f7;
+    color: #222;
+}
+
+header {
+    background: #222;
+    color: white;
+    padding: 20px;
+    text-align: center;
+}
+
+header h1 {
+    margin: 0 0 5px 0;
+}
+
+header p {
+    margin: 0;
+    opacity: 0.8;
+}
+
+nav {
+    background: white;
+    display: flex;
+    justify-content: center;
+    gap: 5px;
+    flex-wrap: wrap;
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
+}
+
+nav button {
+    border: none;
+    background: #eee;
+    padding: 10px 16px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+nav button:hover {
+    background: #ddd;
+}
+
+.container {
+    max-width: 1000px;
+    margin: auto;
+    padding: 20px;
+}
+
+.page {
+    display: none;
+}
+
+.page.active {
+    display: block;
+}
+
+/* DASHBOARD */
+
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.stat-card {
+    background: white;
+    padding: 20px;
+    border-radius: 12px;
+    text-align: center;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+}
+
+.stat-number {
+    font-size: 32px;
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+.card {
+    background: white;
+    padding: 20px;
+    border-radius: 12px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+}
+
+button {
+    cursor: pointer;
+}
+
+.primary-btn {
+    background: #222;
+    color: white;
+    border: none;
+    padding: 13px 20px;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: bold;
+}
+
+.primary-btn:hover {
+    opacity: 0.85;
+}
+
+/* QUIZ */
+
+.quiz-card {
+    max-width: 700px;
+    margin: 30px auto;
+    background: white;
+    padding: 35px;
+    border-radius: 15px;
+    text-align: center;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+}
+
+.quiz-english {
+    font-size: 32px;
+    font-weight: bold;
+    margin-bottom: 15px;
+}
+
+.quiz-hiragana {
+    font-size: 25px;
+    color: #555;
+    margin-bottom: 30px;
+}
+
+.paper-message {
+    font-size: 20px;
+    margin: 25px 0;
+}
+
+.progress-stars {
+    font-size: 28px;
+    margin: 20px;
+}
+
+.rating-buttons {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+    margin-top: 25px;
+}
+
+.rating-buttons button {
+    border: none;
+    padding: 15px 8px;
+    border-radius: 10px;
+    font-weight: bold;
+    font-size: 15px;
+}
+
+.again {
+    background: #ffcdd2;
+}
+
+.hard {
+    background: #ffe0b2;
+}
+
+.good {
+    background: #c8e6c9;
+}
+
+.easy {
+    background: #bbdefb;
+}
+
+.rating-buttons button:hover {
+    transform: translateY(-2px);
+}
+
+.next-info {
+    margin-top: 20px;
+    color: #666;
+}
+
+/* FORMS */
+
+.form-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 15px;
+}
+
+input,
+select {
+    width: 100%;
+    padding: 11px;
+    border: 1px solid #ccc;
+    border-radius: 7px;
+    font-size: 15px;
+}
+
+label {
+    display: block;
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+/* TABLE */
+
+.table-container {
+    overflow-x: auto;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+th,
+td {
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
+    text-align: left;
+}
+
+th {
+    background: #f0f0f0;
+}
+
+.kanji-large {
+    font-size: 24px;
+}
+
+.badge {
+    display: inline-block;
+    padding: 4px 8px;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: bold;
+    background: #eee;
+}
+
+.burned {
+    background: #ffe082;
+}
+
+.leech {
+    background: #ffcdd2;
+}
+
+/* PROGRESS */
+
+.progress-bar {
+    width: 100%;
+    height: 20px;
+    background: #ddd;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.progress-fill {
+    height: 100%;
+    background: #555;
+    width: 0%;
+}
+
+/* FILTERS */
+
+.filter-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 10px;
+}
+
+/* DAILY GOAL */
+
+.goal-number {
+    font-size: 40px;
+    font-weight: bold;
+    text-align: center;
+    margin: 10px;
+}
+
+/* HISTORY */
+
+.history-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px 0;
+    border-bottom: 1px solid #ddd;
+}
+
+/* MODAL */
+
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.5);
+}
+
+.modal-content {
+    background: white;
+    max-width: 600px;
+    margin: 8% auto;
+    padding: 25px;
+    border-radius: 12px;
+}
+
+.close {
+    float: right;
+    font-size: 25px;
+    cursor: pointer;
+}
+
+/* MOBILE */
+
+@media(max-width: 600px) {
+
+    .rating-buttons {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .quiz-english {
+        font-size: 26px;
+    }
+
+    .quiz-hiragana {
+        font-size: 21px;
+    }
+
+    .container {
+        padding: 10px;
+    }
+
+}
+
+</style>
+<style id="modern-design">
+:root{
+  --bg:#f6f7fb;
+  --surface:rgba(255,255,255,.86);
+  --surface-solid:#fff;
+  --text:#171a21;
+  --muted:#6b7280;
+  --line:#e7e9ef;
+  --accent:#635bff;
+  --accent-dark:#5148e8;
+  --shadow:0 12px 35px rgba(20,24,40,.08);
+  --shadow-hover:0 18px 45px rgba(20,24,40,.13);
+  --radius:18px;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;
+  margin:0;color:var(--text);
+  background:
+    radial-gradient(circle at 15% 0%,rgba(99,91,255,.10),transparent 28rem),
+    radial-gradient(circle at 100% 15%,rgba(56,189,248,.08),transparent 24rem),
+    var(--bg);
+  line-height:1.55;
+}
+body:before{
+  content:"";position:fixed;inset:0;pointer-events:none;opacity:.35;
+  background-image:linear-gradient(rgba(99,91,255,.025) 1px,transparent 1px),linear-gradient(90deg,rgba(99,91,255,.025) 1px,transparent 1px);
+  background-size:32px 32px;z-index:-1;
+}
+header{
+  position:relative;overflow:hidden;
+  background:linear-gradient(135deg,#171a21,#2a2f3a);
+  color:#fff;padding:34px 20px 38px;text-align:center;
+  box-shadow:0 8px 30px rgba(0,0,0,.14);
+}
+header:after{
+  content:"";position:absolute;width:320px;height:320px;border-radius:50%;
+  background:rgba(99,91,255,.28);filter:blur(65px);right:-90px;top:-180px;
+}
+header h1{position:relative;margin:0 0 6px;font-size:clamp(1.65rem,4vw,2.35rem);letter-spacing:-.04em}
+header p{position:relative;margin:0;color:rgba(255,255,255,.72);font-size:.96rem}
+nav{
+  position:sticky;top:0;z-index:100;
+  background:rgba(255,255,255,.78);backdrop-filter:blur(18px);
+  -webkit-backdrop-filter:blur(18px);
+  display:flex;justify-content:center;gap:7px;flex-wrap:wrap;
+  padding:10px 14px;border-bottom:1px solid rgba(220,224,233,.8);
+}
+button,input,select{font:inherit}
+button{
+  cursor:pointer;
+  transition:transform .18s cubic-bezier(.2,.8,.2,1),box-shadow .18s ease,background .18s ease,opacity .18s ease,border-color .18s ease;
+}
+button:hover{transform:translateY(-2px)}
+button:active{transform:translateY(1px) scale(.98)}
+button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid rgba(99,91,255,.25);outline-offset:2px}
+nav button{
+  border:1px solid transparent;background:transparent;color:#5b6270;
+  padding:10px 14px;border-radius:12px;font-weight:700;
+}
+nav button:hover{background:#fff;color:var(--text);box-shadow:0 5px 16px rgba(20,24,40,.07)}
+.container{max-width:1120px;margin:auto;padding:28px 20px 60px}
+.page{display:none;animation:pageIn .35s ease both}
+.page.active{display:block}
+@keyframes pageIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+h2{font-size:clamp(1.55rem,3vw,2rem);letter-spacing:-.03em;margin:8px 0 20px}
+h3{margin-top:0;letter-spacing:-.015em}
+.stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(155px,1fr));gap:15px;margin-bottom:20px}
+.stat-card,.card,.quiz-card,.modal-content{
+  background:var(--surface);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+  border:1px solid rgba(231,233,239,.9);box-shadow:var(--shadow);
+}
+.stat-card{
+  padding:22px 18px;border-radius:var(--radius);text-align:center;
+  transition:transform .22s ease,box-shadow .22s ease;
+}
+.stat-card:hover{transform:translateY(-4px);box-shadow:var(--shadow-hover)}
+.stat-number{font-size:clamp(1.8rem,4vw,2.35rem);font-weight:800;letter-spacing:-.05em;margin-bottom:2px}
+.card{padding:24px;border-radius:var(--radius);margin-bottom:20px}
+.primary-btn{
+  background:linear-gradient(135deg,var(--accent),var(--accent-dark));color:#fff;border:0;
+  padding:13px 20px;border-radius:12px;font-size:15px;font-weight:800;
+  box-shadow:0 8px 20px rgba(99,91,255,.22);
+}
+.primary-btn:hover{box-shadow:0 12px 27px rgba(99,91,255,.30)}
+.quiz-card{max-width:720px;margin:30px auto;padding:clamp(25px,5vw,48px);border-radius:24px;text-align:center}
+.quiz-english{font-size:clamp(2rem,6vw,3.2rem);font-weight:850;letter-spacing:-.045em;margin-bottom:8px}
+.quiz-hiragana{font-size:clamp(1.3rem,4vw,1.65rem);color:var(--muted);margin-bottom:28px}
+.paper-message{font-size:18px;color:#4b5563;margin:25px 0}
+.progress-stars{font-size:26px;margin:20px;letter-spacing:3px}
+.rating-buttons{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:25px}
+.rating-buttons button{
+  border:1px solid transparent;padding:15px 8px;border-radius:14px;font-weight:850;font-size:14px;
+  box-shadow:0 5px 14px rgba(20,24,40,.06);
+}
+.rating-buttons button:hover{transform:translateY(-4px);box-shadow:0 12px 22px rgba(20,24,40,.12)}
+.rating-buttons button:active{transform:translateY(1px) scale(.97)}
+.again{background:#fff0f1;border-color:#ffd4d7}
+.hard{background:#fff5e8;border-color:#ffe1b8}
+.good{background:#ecfbf1;border-color:#ccefd8}
+.easy{background:#edf6ff;border-color:#cfe6ff}
+.rating-buttons small{display:block;font-weight:600;opacity:.7;margin-top:3px}
+.next-info{margin-top:20px;color:var(--muted);font-size:14px}
+.form-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px}
+input,select{
+  width:100%;padding:12px 13px;border:1px solid var(--line);border-radius:11px;
+  background:#fff;color:var(--text);font-size:15px;transition:border-color .18s ease,box-shadow .18s ease,transform .18s ease;
+}
+input:hover,select:hover{border-color:#cdd1dc}
+input:focus,select:focus{border-color:var(--accent);box-shadow:0 0 0 4px rgba(99,91,255,.10)}
+label{display:block;font-weight:750;margin-bottom:7px;font-size:14px}
+.table-container{overflow-x:auto;border-radius:14px;border:1px solid var(--line)}
+table{width:100%;border-collapse:collapse;background:#fff}
+th,td{padding:13px 12px;border-bottom:1px solid var(--line);text-align:left;white-space:nowrap}
+th{background:#f8f9fc;color:#5f6673;font-size:12px;text-transform:uppercase;letter-spacing:.06em}
+tbody tr{transition:background .16s ease}
+tbody tr:hover{background:#fafaff}
+td button{
+  border:1px solid var(--line);background:#fff;padding:7px 10px;border-radius:9px;margin:2px;
+  font-size:13px;font-weight:700;
+}
+td button:hover{border-color:#c9c4ff;background:#f7f6ff}
+.kanji-large{font-size:25px;font-weight:750}
+.badge{display:inline-block;padding:5px 9px;border-radius:999px;font-size:11px;font-weight:800;background:#eef0f5;margin:2px}
+.burned{background:#fff2c7}.leech{background:#ffe3e5}
+.progress-bar{width:100%;height:12px;background:#e9ebf1;border-radius:999px;overflow:hidden}
+.progress-fill{height:100%;background:linear-gradient(90deg,var(--accent),#8b84ff);width:0%;border-radius:999px;transition:width .6s cubic-bezier(.2,.8,.2,1)}
+.goal-number{font-size:40px;font-weight:850;text-align:center;margin:10px}
+.history-row{display:flex;justify-content:space-between;gap:16px;padding:13px 0;border-bottom:1px solid var(--line)}
+.modal{
+  display:none;position:fixed;z-index:1000;inset:0;width:100%;height:100%;
+  background:rgba(10,12,18,.52);backdrop-filter:blur(7px);-webkit-backdrop-filter:blur(7px);
+  animation:fadeIn .2s ease both;
+}
+.modal-content{max-width:600px;margin:6% auto;padding:28px;border-radius:20px;animation:modalIn .25s cubic-bezier(.2,.8,.2,1) both}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+@keyframes modalIn{from{opacity:0;transform:translateY(16px) scale(.98)}to{opacity:1;transform:none}}
+.close{float:right;font-size:28px;line-height:1;cursor:pointer;color:#777;transition:transform .18s ease,color .18s ease}
+.close:hover{color:var(--text);transform:rotate(6deg) scale(1.08)}
+#quizCounter{color:var(--muted);font-size:13px;font-weight:750;margin-bottom:20px}
+#quizCategory{margin:12px 0}
+@media(max-width:700px){
+  nav{justify-content:flex-start;overflow-x:auto;flex-wrap:nowrap}
+  nav button{white-space:nowrap}
+  .container{padding:20px 12px 45px}
+  .rating-buttons{grid-template-columns:repeat(2,1fr)}
+  .card{padding:19px}
+  .quiz-card{margin:18px auto;padding:25px 17px}
+}
+@media(prefers-reduced-motion:reduce){
+  *,*:before,*:after{scroll-behavior:auto!important;animation-duration:.01ms!important;transition-duration:.01ms!important}
+}
+</style>
+
+
+<style id="answer-reveal-design">
+/* ===== Paper-writing answer reveal ===== */
+.answer-reveal-area{
+  margin: 22px auto 18px;
+  max-width: 620px;
+  text-align:center;
+  min-height: 74px;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  gap:14px;
+}
+
+.show-answer-btn{
+  appearance:none;
+  border:1px solid rgba(255,255,255,.16);
+  border-radius:16px;
+  padding:13px 22px;
+  font-size:15px;
+  font-weight:800;
+  letter-spacing:.1px;
+  cursor:pointer;
+  color:#fff;
+  background:linear-gradient(135deg,#6366f1,#8b5cf6);
+  box-shadow:0 10px 26px rgba(99,102,241,.25);
+  transition:transform .18s ease, box-shadow .18s ease, filter .18s ease;
+}
+.show-answer-btn:hover{
+  transform:translateY(-2px) scale(1.015);
+  box-shadow:0 15px 32px rgba(99,102,241,.34);
+  filter:saturate(1.08);
+}
+.show-answer-btn:active{
+  transform:translateY(1px) scale(.985);
+}
+.show-answer-btn:focus-visible{
+  outline:3px solid rgba(129,140,248,.45);
+  outline-offset:3px;
+}
+.show-answer-btn.revealed{
+  display:none;
+}
+
+.answer-eye{
+  display:inline-block;
+  margin-right:8px;
+  font-size:14px;
+  transition:transform .35s ease;
+}
+.show-answer-btn:hover .answer-eye{
+  transform:scale(1.2) rotate(-8deg);
+}
+
+.kanji-answer{
+  display:none;
+  width:min(100%,620px);
+  box-sizing:border-box;
+  padding:20px 22px;
+  border-radius:20px;
+  border:1px solid rgba(99,102,241,.22);
+  background:linear-gradient(145deg,rgba(99,102,241,.10),rgba(139,92,246,.07));
+  box-shadow:0 12px 35px rgba(0,0,0,.10), inset 0 1px 0 rgba(255,255,255,.18);
+  overflow:hidden;
+}
+.kanji-answer.visible{
+  display:block;
+  animation:answerReveal .42s cubic-bezier(.2,.8,.2,1) both;
+}
+.kanji-answer .answer-kanji{
+  display:block;
+  font-size:clamp(42px,8vw,68px);
+  line-height:1.15;
+  font-weight:900;
+  letter-spacing:.08em;
+  margin-bottom:7px;
+  animation:kanjiPop .45s .08s cubic-bezier(.2,1.3,.3,1) both;
+}
+.kanji-answer .answer-meta{
+  display:block;
+  font-size:14px;
+  opacity:.72;
+}
+
+.rating-locked{
+  opacity:.42 !important;
+  filter:grayscale(.65);
+  pointer-events:none !important;
+  transform:none !important;
+}
+.rating-unlocked{
+  animation:ratingsUnlock .45s cubic-bezier(.2,.8,.2,1) both;
+}
+
+@keyframes answerReveal{
+  from{opacity:0; transform:translateY(10px) scale(.96); max-height:0;}
+  to{opacity:1; transform:translateY(0) scale(1); max-height:240px;}
+}
+@keyframes kanjiPop{
+  from{opacity:0; transform:scale(.65) translateY(8px);}
+  to{opacity:1; transform:scale(1) translateY(0);}
+}
+@keyframes ratingsUnlock{
+  from{opacity:.42; transform:translateY(8px);}
+  to{opacity:1; transform:translateY(0);}
+}
+
+@media (prefers-reduced-motion:reduce){
+  .answer-reveal-area *, .rating-unlocked, .kanji-answer.visible{
+    animation:none !important;
+    transition:none !important;
+  }
+}
+
+@media (max-width:600px){
+  .answer-reveal-area{margin-top:16px;}
+  .show-answer-btn{width:100%; max-width:320px;}
+  .kanji-answer{padding:18px 14px;}
+}
+</style>
+
+</head>
+
+<body>
+
+<header>
+
+<h1>📝 Kanji Writing SRS</h1>
+<p>Write on paper • Review intelligently • Build your vocabulary</p>
+
+</header>
+
+<nav>
+
+<button onclick="showPage('dashboard')">🏠 Dashboard</button>
+<button onclick="showPage('quiz')">✍️ Study</button>
+<button onclick="showPage('vocabulary')">📚 Vocabulary</button>
+<button onclick="showPage('statistics')">📊 Statistics</button>
+<button onclick="showPage('add')">➕ Add Word</button>
+<button onclick="showPage('backup')">💾 Backup</button>
+
+</nav>
+
+<div class="container">
+
+<!-- ================= DASHBOARD ================= -->
+
+<section id="dashboard" class="page active">
+
+<h2>Dashboard</h2>
+
+<div class="stats-grid">
+
+<div class="stat-card">
+<div class="stat-number" id="totalWords">0</div>
+Total Words
+</div>
+
+<div class="stat-card">
+<div class="stat-number" id="dueWords">0</div>
+Due Today
+</div>
+
+<div class="stat-card">
+<div class="stat-number" id="burnedWords">0</div>
+Burned 🔥
+</div>
+
+<div class="stat-card">
+<div class="stat-number" id="failedWords">0</div>
+Problem Words
+</div>
+
+<div class="stat-card">
+<div class="stat-number" id="streak">0</div>
+Day Streak
+</div>
+
+<div class="stat-card">
+<div class="stat-number" id="xp">0</div>
+XP
+</div>
+
+</div>
+
+<div class="card">
+
+<h3>🎯 Today's Goal</h3>
+
+<div class="goal-number">
+<span id="todayReviews">0</span> /
+<span id="dailyGoalDisplay">20</span>
+</div>
+
+<div class="progress-bar">
+<div class="progress-fill" id="goalProgress"></div>
+</div>
+
+<br>
+
+<button class="primary-btn" onclick="showPage('quiz')">
+Start Studying
+</button>
+
+</div>
+
+<div class="card">
+
+<h3>🔥 Most Failed Words</h3>
+
+<div id="dashboardFailures"></div>
+
+</div>
+
+<div class="card">
+
+<h3>📅 Recent Activity</h3>
+
+<div id="dashboardHistory"></div>
+
+</div>
+
+</section>
+
+
+<!-- ================= QUIZ ================= -->
+
+<section id="quiz" class="page">
+
+<div id="quizStart">
+
+<div class="card">
+
+<h2>✍️ Paper Writing Practice</h2>
+
+<p>
+The website will show you the English meaning and hiragana.
+Write the kanji <strong>on paper</strong>.
+</p>
+
+<p>
+Then rate how well you remembered it.
+</p>
+
+<button class="primary-btn" onclick="startQuiz()">
+Start Review
+</button>
+
+</div>
+
+</div>
+
+
+<div id="quizArea" style="display:none;">
+
+<div class="quiz-card">
+
+<div id="quizCounter"></div>
+
+<div class="quiz-english" id="quizEnglish"></div>
+
+<div class="quiz-hiragana" id="quizHiragana"></div>
+
+<div class="paper-message">
+✍️ Write the kanji on paper now.
+</div>
+
+<div class="progress-stars" id="quizProgress"></div>
+
+<div id="quizCategory"></div>
+
+
+        <div class="answer-reveal-area" id="answerRevealArea">
+          <button class="show-answer-btn" id="showAnswerBtn" type="button" onclick="showKanjiAnswer()">
+            <span class="answer-eye">◉</span>
+            <span>Show Answer</span>
+          </button>
+          <div class="kanji-answer" id="kanjiAnswer" aria-live="polite"></div>
+        </div>
+        <div class="rating-buttons">
+
+<button class="again" onclick="rateWord('again')">
+🔴 AGAIN
+<br>
+<small>Couldn't remember</small>
+</button>
+
+<button class="hard" onclick="rateWord('hard')">
+🟠 HARD
+<br>
+<small>Struggled</small>
+</button>
+
+<button class="good" onclick="rateWord('good')">
+🟢 GOOD
+<br>
+<small>Normal</small>
+</button>
+
+<button class="easy" onclick="rateWord('easy')">
+🔵 EASY
+<br>
+<small>Very easy</small>
+</button>
+
+</div>
+
+<div class="next-info" id="nextInfo"></div>
+
+</div>
+
+</div>
+
+
+<div id="quizFinished" style="display:none;">
+
+<div class="card" style="text-align:center;">
+
+<h2>🎉 Review Complete!</h2>
+
+<p id="quizResult"></p>
+
+<button class="primary-btn" onclick="showPage('dashboard')">
+Back to Dashboard
+</button>
+
+</div>
+
+</div>
+
+</section>
+
+
+<!-- ================= VOCABULARY ================= -->
+
+<section id="vocabulary" class="page">
+
+<h2>📚 Vocabulary</h2>
+
+<div class="card">
+
+<h3>Search & Filter</h3>
+
+<div class="filter-grid">
+
+<input
+type="text"
+id="searchInput"
+placeholder="Search..."
+oninput="renderVocabulary()"
+>
+
+<select id="categoryFilter" onchange="renderVocabulary()">
+<option value="">All Categories</option>
+</select>
+
+<select id="jlptFilter" onchange="renderVocabulary()">
+<option value="">All JLPT Levels</option>
+<option>N5</option>
+<option>N4</option>
+<option>N3</option>
+<option>N2</option>
+<option>N1</option>
+<option>Unknown</option>
+</select>
+
+<select id="statusFilter" onchange="renderVocabulary()">
+<option value="">All Statuses</option>
+<option value="due">Due</option>
+<option value="learning">Learning</option>
+<option value="burned">Burned</option>
+<option value="leech">Problem Words</option>
+</select>
+
+</div>
+
+</div>
+
+
+<div class="card">
+
+<div class="table-container">
+
+<table>
+
+<thead>
+
+<tr>
+<th>Kanji</th>
+<th>Reading</th>
+<th>English</th>
+<th>JLPT</th>
+<th>Category</th>
+<th>Progress</th>
+<th>Failures</th>
+<th>Actions</th>
+</tr>
+
+</thead>
+
+<tbody id="vocabularyTable"></tbody>
+
+</table>
+
+</div>
+
+</div>
+
+</section>
+
+
+<!-- ================= STATISTICS ================= -->
+
+<section id="statistics" class="page">
+
+<h2>📊 Statistics</h2>
+
+<div class="stats-grid">
+
+<div class="stat-card">
+<div class="stat-number" id="statReviews">0</div>
+Total Reviews
+</div>
+
+<div class="stat-card">
+<div class="stat-number" id="statAccuracy">0%</div>
+Successful Ratings
+</div>
+
+<div class="stat-card">
+<div class="stat-number" id="statBurned">0</div>
+Burned Words
+</div>
+
+<div class="stat-card">
+<div class="stat-number" id="statFailures">0</div>
+Total Mistakes
+</div>
+
+</div>
+
+
+<div class="card">
+
+<h3>🔥 Top 10 Most Failed</h3>
+
+<div id="topFailures"></div>
+
+</div>
+
+
+<div class="card">
+
+<h3>🐛 Problem Words</h3>
+
+<p>
+Words with 8 or more mistakes are automatically marked as problem words.
+</p>
+
+<div id="leechList"></div>
+
+</div>
+
+
+<div class="card">
+
+<h3>📅 Review History</h3>
+
+<div id="reviewHistory"></div>
+
+</div>
+
+</section>
+
+
+<!-- ================= ADD WORD ================= -->
+
+<section id="add" class="page">
+
+<h2>➕ Add Vocabulary</h2>
+
+<div class="card">
+
+<div class="form-grid">
+
+<div>
+<label>English</label>
+<input id="newEnglish" placeholder="Certificate">
+</div>
+
+<div>
+<label>Kanji</label>
+<input id="newKanji" placeholder="証明書">
+</div>
+
+<div>
+<label>Hiragana</label>
+<input id="newHiragana" placeholder="しょうめいしょ">
+</div>
+
+<div>
+<label>JLPT Level</label>
+
+<select id="newJLPT">
+
+<option value="Unknown">Unknown</option>
+<option>N5</option>
+<option>N4</option>
+<option>N3</option>
+<option>N2</option>
+<option>N1</option>
+
+</select>
+
+</div>
+
+<div>
+<label>Category</label>
+
+<select id="newCategory">
+
+<option>Daily Life</option>
+<option>Politics</option>
+<option>Environment</option>
+<option>Geography</option>
+<option>School</option>
+<option>Work</option>
+<option>Okinawa</option>
+<option>Travel</option>
+<option>Animals</option>
+<option>Food</option>
+<option>Other</option>
+
+</select>
+
+</div>
+
+<div>
+<label>Part of Speech</label>
+
+<select id="newPOS">
+
+<option>Noun</option>
+<option>Verb</option>
+<option>い-adjective</option>
+<option>な-adjective</option>
+<option>Adverb</option>
+<option>Expression</option>
+<option>Other</option>
+
+</select>
+
+</div>
+
+</div>
+
+<br>
+
+<button class="primary-btn" onclick="addWord()">
+Add Word
+</button>
+
+</div>
+
+</section>
+
+
+<!-- ================= BACKUP ================= -->
+
+<section id="backup" class="page">
+
+<h2>💾 Backup & Data</h2>
+
+<div class="card">
+
+<h3>Export Backup</h3>
+
+<p>
+Save all vocabulary, SRS progress, statistics and settings
+to a file.
+</p>
+
+<button class="primary-btn" onclick="exportData()">
+⬇️ Export Backup
+</button>
+
+</div>
+
+
+<div class="card">
+
+<h3>Import Backup</h3>
+
+<p>
+Import a backup file to restore your vocabulary and progress.
+</p>
+
+<input
+type="file"
+id="importFile"
+accept=".json"
+onchange="importData(event)"
+>
+
+</div>
+
+
+<div class="card">
+
+<h3>⚠️ Reset</h3>
+
+<p>
+This will permanently delete your current vocabulary and progress
+from this browser.
+</p>
+
+<button
+class="primary-btn"
+onclick="resetAll()"
+style="background:#b71c1c;"
+>
+Reset Everything
+</button>
+
+</div>
+
+</section>
+
+</div>
+
+
+<!-- ================= EDIT MODAL ================= -->
+
+<div id="editModal" class="modal">
+
+<div class="modal-content">
+
+<span class="close" onclick="closeEdit()">&times;</span>
+
+<h2>Edit Word</h2>
+
+<input type="hidden" id="editIndex">
+
+<label>English</label>
+<input id="editEnglish">
+
+<br><br>
+
+<label>Kanji</label>
+<input id="editKanji">
+
+<br><br>
+
+<label>Hiragana</label>
+<input id="editHiragana">
+
+<br><br>
+
+<label>JLPT</label>
+
+<select id="editJLPT">
+
+<option>Unknown</option>
+<option>N5</option>
+<option>N4</option>
+<option>N3</option>
+<option>N2</option>
+<option>N1</option>
+
+</select>
+
+<br><br>
+
+<label>Category</label>
+
+<select id="editCategory">
+
+<option>Daily Life</option>
+<option>Politics</option>
+<option>Environment</option>
+<option>Geography</option>
+<option>School</option>
+<option>Work</option>
+<option>Okinawa</option>
+<option>Travel</option>
+<option>Animals</option>
+<option>Food</option>
+<option>Other</option>
+
+</select>
+
+<br><br>
+
+<label>Part of Speech</label>
+
+<select id="editPOS">
+
+<option>Noun</option>
+<option>Verb</option>
+<option>い-adjective</option>
+<option>な-adjective</option>
+<option>Adverb</option>
+<option>Expression</option>
+<option>Other</option>
+
+</select>
+
+<br><br>
+
+<button class="primary-btn" onclick="saveEdit()">
+Save Changes
+</button>
+
+</div>
+
+</div>
+
+
+<script>
+
+/* =========================================================
+   SETTINGS
+========================================================= */
+
+const DAILY_GOAL = 20;
+
+const LEECH_LIMIT = 8;
+
+/*
+SRS intervals in days.
+
+Again = tomorrow
+
+Hard = shorter interval
+
+Good = normal interval
+
+Easy = longer interval
+*/
+
+const SRS = {
+
+    again: 1,
+
+    hard: {
+        0: 1,
+        1: 2,
+        2: 4,
+        3: 8,
+        4: 14
+    },
+
+    good: {
+        0: 1,
+        1: 3,
+        2: 7,
+        3: 14,
+        4: 30
+    },
+
+    easy: {
+        0: 3,
+        1: 7,
+        2: 14,
+        3: 30,
+        4: 60
+    }
+
+};
+
+
+/* =========================================================
+   DEFAULT WORDS
+========================================================= */
+
+const defaultWords = [
+
+{
+english:"Police",
+kanji:"警察",
+hiragana:"けいさつ",
+jlpt:"N3",
+category:"Daily Life",
+pos:"Noun"
+},
+
+{
+english:"Youth",
+kanji:"青春",
+hiragana:"せいしゅん",
+jlpt:"N2",
+category:"Daily Life",
+pos:"Noun"
+},
+
+{
+english:"Certificate",
+kanji:"証明書",
+hiragana:"しょうめいしょ",
+jlpt:"N2",
+category:"Daily Life",
+pos:"Noun"
+},
+
+{
+english:"Crybaby",
+kanji:"泣き虫",
+hiragana:"なきむし",
+jlpt:"N2",
+category:"Daily Life",
+pos:"Noun"
+},
+
+{
+english:"Detailed",
+kanji:"詳しい",
+hiragana:"くわしい",
+jlpt:"N3",
+category:"Daily Life",
+pos:"い-adjective"
+},
+
+{
+english:"Salt",
+kanji:"塩",
+hiragana:"しお",
+jlpt:"N5",
+category:"Food",
+pos:"Noun"
+},
+
+{
+english:"Failure",
+kanji:"失敗",
+hiragana:"しっぱい",
+jlpt:"N3",
+category:"Daily Life",
+pos:"Noun"
+},
+
+{
+english:"Same as ever",
+kanji:"相変わらず",
+hiragana:"あいかわらず",
+jlpt:"N2",
+category:"Expressions",
+pos:"Expression"
+},
+
+{
+english:"Signature",
+kanji:"署名",
+hiragana:"しょめい",
+jlpt:"N2",
+category:"Daily Life",
+pos:"Noun"
+},
+
+{
+english:"Empty seat",
+kanji:"空席",
+hiragana:"くうせき",
+jlpt:"N2",
+category:"Daily Life",
+pos:"Noun"
+},
+
+{
+english:"Atom",
+kanji:"原子",
+hiragana:"げんし",
+jlpt:"N2",
+category:"Science",
+pos:"Noun"
+}
+
+];
+
+
+/* =========================================================
+   DATA
+========================================================= */
+
+let words = JSON.parse(localStorage.getItem("kanjiWords"));
+
+if (!words) {
+
+    words = defaultWords.map(word => ({
+        ...word,
+        correctCount: 0,
+        failCount: 0,
+        dueDate: today()
+    }));
+
+} else {
+
+    words = words.map(word => ({
+
+        ...word,
+
+        correctCount: word.correctCount ?? 0,
+
+        failCount: word.failCount ?? 0,
+
+        dueDate: word.dueDate ?? today(),
+
+        jlpt: word.jlpt ?? "Unknown",
+
+        category: word.category ?? "Other",
+
+        pos: word.pos ?? "Other",
+
+        lastReviewed: word.lastReviewed ?? null
+
+    }));
+
+}
+
+
+/* =========================================================
+   USER STATS
+========================================================= */
+
+let stats = JSON.parse(localStorage.getItem("kanjiStats")) || {
+
+    totalReviews: 0,
+
+    successfulReviews: 0,
+
+    totalFailures: 0,
+
+    xp: 0,
+
+    reviewHistory: {},
+
+    lastStudyDate: null,
+
+    streak: 0
+
+};
+
+
+/* =========================================================
+   QUIZ VARIABLES
+========================================================= */
+
+let quizWords = [];
+
+let quizIndex = 0;
+
+
+/* =========================================================
+   DATE FUNCTIONS
+========================================================= */
+
+function today() {
+
+    const d = new Date();
+
+    return d.toISOString().split("T")[0];
+
+}
+
+
+function addDays(dateString, days) {
+
+    const date = new Date(dateString + "T00:00:00");
+
+    date.setDate(date.getDate() + days);
+
+    return date.toISOString().split("T")[0];
+
+}
+
+
+function isBurned(word) {
+
+    return word.correctCount >= 5;
+
+}
+
+
+function isDue(word) {
+
+    return !isBurned(word) && word.dueDate <= today();
+
+}
+
+
+function isLeech(word) {
+
+    return word.failCount >= LEECH_LIMIT;
+
+}
+
+
+/* =========================================================
+   SAVE
+========================================================= */
+
+function saveData() {
+
+    localStorage.setItem(
+        "kanjiWords",
+        JSON.stringify(words)
+    );
+
+    localStorage.setItem(
+        "kanjiStats",
+        JSON.stringify(stats)
+    );
+
+}
+
+
+/* =========================================================
+   PAGE NAVIGATION
+========================================================= */
+
+function showPage(page) {
+
+    document.querySelectorAll(".page")
+        .forEach(p => p.classList.remove("active"));
+
+    document.getElementById(page)
+        .classList.add("active");
+
+    updateAll();
+
+}
+
+
+/* =========================================================
+   QUIZ
+========================================================= */
+
+function startQuiz() {
+
+    quizWords = words
+        .filter(word => isDue(word));
+
+    quizWords.sort(() => Math.random() - 0.5);
+
+    quizWords = quizWords.slice(0,5);
+
+    quizIndex = 0;
+
+    document.getElementById("quizStart")
+        .style.display = "none";
+
+    document.getElementById("quizFinished")
+        .style.display = "none";
+
+    if (quizWords.length === 0) {
+
+        document.getElementById("quizArea")
+            .style.display = "none";
+
+        document.getElementById("quizFinished")
+            .style.display = "block";
+
+        document.getElementById("quizResult")
+            .innerHTML =
+            "🎉 You have no words due today!<br><br>" +
+            "Come back tomorrow for more practice.";
+
+        return;
+
+    }
+
+    document.getElementById("quizArea")
+        .style.display = "block";
+
+    showQuizWord();
+
+}
+
+
+function showQuizWord() {
+
+    const word = quizWords[quizIndex];
+
+    document.getElementById("quizCounter")
+        .textContent =
+        `Word ${quizIndex + 1} of ${quizWords.length}`;
+
+    document.getElementById("quizEnglish")
+        .textContent = word.english;
+
+    document.getElementById("quizHiragana")
+        .textContent = word.hiragana;
+
+    document.getElementById("quizCategory")
+        .innerHTML =
+        `<span class="badge">${word.category}</span>
+         <span class="badge">${word.jlpt}</span>`;
+
+    let stars = "";
+
+    for (let i = 0; i < 5; i++) {
+
+        if (i < word.correctCount) {
+
+            stars += "⭐";
+
+        } else {
+
+            stars += "☆";
+
+        }
+
+    }
+
+    document.getElementById("quizProgress")
+        .textContent = stars;
+
+    document.getElementById("nextInfo")
+        .textContent =
+        `Current progress: ${word.correctCount}/5 successful reviews`;
+
+}
+
+
+/* =========================================================
+   RATING
+========================================================= */
+
+function rateWord(rating) {
+
+    const word = quizWords[quizIndex];
+
+    stats.totalReviews++;
+
+    const todayDate = today();
+
+    if (!stats.reviewHistory[todayDate]) {
+
+        stats.reviewHistory[todayDate] = 0;
+
+    }
+
+    stats.reviewHistory[todayDate]++;
+
+
+    word.lastReviewed = todayDate;
+
+
+    /* AGAIN */
+
+    if (rating === "again") {
+
+        word.failCount++;
+
+        word.correctCount = 0;
+
+        word.dueDate = addDays(todayDate, 1);
+
+        stats.totalFailures++;
+
+        stats.xp += 1;
+
+    }
+
+
+    /* HARD */
+
+    else if (rating === "hard") {
+
+        stats.successfulReviews++;
+
+        stats.xp += 3;
+
+        if (word.correctCount < 5) {
+
+            const interval =
+                SRS.hard[word.correctCount];
+
+            word.correctCount++;
+
+            if (word.correctCount >= 5) {
+
+                word.dueDate = "9999-12-31";
+
+            } else {
+
+                word.dueDate =
+                    addDays(todayDate, interval);
+
+            }
+
+        }
+
+    }
+
+
+    /* GOOD */
+
+    else if (rating === "good") {
+
+        stats.successfulReviews++;
+
+        stats.xp += 5;
+
+        if (word.correctCount < 5) {
+
+            const interval =
+                SRS.good[word.correctCount];
+
+            word.correctCount++;
+
+            if (word.correctCount >= 5) {
+
+                word.dueDate = "9999-12-31";
+
+            } else {
+
+                word.dueDate =
+                    addDays(todayDate, interval);
+
+            }
+
+        }
+
+    }
+
+
+    /* EASY */
+
+    else if (rating === "easy") {
+
+        stats.successfulReviews++;
+
+        stats.xp += 7;
+
+        if (word.correctCount < 5) {
+
+            const interval =
+                SRS.easy[word.correctCount];
+
+            word.correctCount++;
+
+            if (word.correctCount >= 5) {
+
+                word.dueDate = "9999-12-31";
+
+            } else {
+
+                word.dueDate =
+                    addDays(todayDate, interval);
+
+            }
+
+        }
+
+    }
+
+
+    updateStreak();
+
+    saveData();
+
+    quizIndex++;
+
+    if (quizIndex >= quizWords.length) {
+
+        finishQuiz();
+
+    } else {
+
+        showQuizWord();
+
+    }
+
+}
+
+
+function finishQuiz() {
+
+    document.getElementById("quizArea")
+        .style.display = "none";
+
+    document.getElementById("quizFinished")
+        .style.display = "block";
+
+    document.getElementById("quizResult")
+        .innerHTML =
+        `You reviewed ${quizWords.length} words.<br><br>
+         ⭐ +${quizWords.reduce((sum, word) => sum + 1, 0)} XP minimum<br>
+         Come back tomorrow for your next reviews.`;
+
+    updateAll();
+
+}
+
+
+/* =========================================================
+   STREAK
+========================================================= */
+
+function updateStreak() {
+
+    const todayDate = today();
+
+    if (stats.lastStudyDate === todayDate) {
+
+        return;
+
+    }
+
+    if (!stats.lastStudyDate) {
+
+        stats.streak = 1;
+
+    } else {
+
+        const yesterday =
+            addDays(todayDate, -1);
+
+        if (stats.lastStudyDate === yesterday) {
+
+            stats.streak++;
+
+        } else {
+
+            stats.streak = 1;
+
+        }
+
+    }
+
+    stats.lastStudyDate = todayDate;
+
+}
+
+
+/* =========================================================
+   ADD WORD
+========================================================= */
+
+function addWord() {
+
+    const english =
+        document.getElementById("newEnglish")
+        .value.trim();
+
+    const kanji =
+        document.getElementById("newKanji")
+        .value.trim();
+
+    const hiragana =
+        document.getElementById("newHiragana")
+        .value.trim();
+
+    const jlpt =
+        document.getElementById("newJLPT").value;
+
+    const category =
+        document.getElementById("newCategory").value;
+
+    const pos =
+        document.getElementById("newPOS").value;
+
+
+    if (!english || !kanji || !hiragana) {
+
+        alert("Please enter English, kanji and hiragana.");
+
+        return;
+
+    }
+
+
+    if (words.some(word => word.kanji === kanji)) {
+
+        alert("This kanji word already exists.");
+
+        return;
+
+    }
+
+
+    words.push({
+
+        english,
+
+        kanji,
+
+        hiragana,
+
+        jlpt,
+
+        category,
+
+        pos,
+
+        correctCount: 0,
+
+        failCount: 0,
+
+        dueDate: today(),
+
+        lastReviewed: null
+
+    });
+
+
+    saveData();
+
+    alert("Word added!");
+
+    document.getElementById("newEnglish").value = "";
+
+    document.getElementById("newKanji").value = "";
+
+    document.getElementById("newHiragana").value = "";
+
+    updateAll();
+
+}
+
+
+/* =========================================================
+   DELETE WORD
+========================================================= */
+
+function deleteWord(index) {
+
+    const word = words[index];
+
+    if (!confirm(
+        `Delete "${word.kanji} ${word.hiragana}"?`
+    )) {
+
+        return;
+
+    }
+
+    words.splice(index, 1);
+
+    saveData();
+
+    updateAll();
+
+}
+
+
+/* =========================================================
+   EDIT WORD
+========================================================= */
+
+function editWord(index) {
+
+    const word = words[index];
+
+    document.getElementById("editIndex")
+        .value = index;
+
+    document.getElementById("editEnglish")
+        .value = word.english;
+
+    document.getElementById("editKanji")
+        .value = word.kanji;
+
+    document.getElementById("editHiragana")
+        .value = word.hiragana;
+
+    document.getElementById("editJLPT")
+        .value = word.jlpt;
+
+    document.getElementById("editCategory")
+        .value = word.category;
+
+    document.getElementById("editPOS")
+        .value = word.pos;
+
+    document.getElementById("editModal")
+        .style.display = "block";
+
+}
+
+
+function closeEdit() {
+
+    document.getElementById("editModal")
+        .style.display = "none";
+
+}
+
+
+function saveEdit() {
+
+    const index =
+        Number(document.getElementById("editIndex").value);
+
+    const word = words[index];
+
+    word.english =
+        document.getElementById("editEnglish").value.trim();
+
+    word.kanji =
+        document.getElementById("editKanji").value.trim();
+
+    word.hiragana =
+        document.getElementById("editHiragana").value.trim();
+
+    word.jlpt =
+        document.getElementById("editJLPT").value;
+
+    word.category =
+        document.getElementById("editCategory").value;
+
+    word.pos =
+        document.getElementById("editPOS").value;
+
+    saveData();
+
+    closeEdit();
+
+    updateAll();
+
+}
+
+
+/* =========================================================
+   VOCABULARY TABLE
+========================================================= */
+
+function renderVocabulary() {
+
+    const search =
+        document.getElementById("searchInput")
+        .value.toLowerCase();
+
+    const category =
+        document.getElementById("categoryFilter").value;
+
+    const jlpt =
+        document.getElementById("jlptFilter").value;
+
+    const status =
+        document.getElementById("statusFilter").value;
+
+
+    let filtered = words.filter(word => {
+
+        const matchesSearch =
+
+            word.kanji.toLowerCase().includes(search) ||
+
+            word.hiragana.toLowerCase().includes(search) ||
+
+            word.english.toLowerCase().includes(search);
+
+
+        const matchesCategory =
+            !category || word.category === category;
+
+
+        const matchesJLPT =
+            !jlpt || word.jlpt === jlpt;
+
+
+        let matchesStatus = true;
+
+
+        if (status === "due") {
+
+            matchesStatus = isDue(word);
+
+        }
+
+        else if (status === "learning") {
+
+            matchesStatus =
+                !isBurned(word) &&
+                !isDue(word);
+
+        }
+
+        else if (status === "burned") {
+
+            matchesStatus = isBurned(word);
+
+        }
+
+        else if (status === "leech") {
+
+            matchesStatus = isLeech(word);
+
+        }
+
+
+        return (
+
+            matchesSearch &&
+
+            matchesCategory &&
+
+            matchesJLPT &&
+
+            matchesStatus
+
+        );
+
+    });
+
+
+    const tbody =
+        document.getElementById("vocabularyTable");
+
+    tbody.innerHTML = "";
+
+
+    filtered.forEach(word => {
+
+        const realIndex =
+            words.indexOf(word);
+
+
+        let progress = "";
+
+        if (isBurned(word)) {
+
+            progress =
+                `<span class="badge burned">🔥 BURNED</span>`;
+
+        } else {
+
+            progress =
+                `${word.correctCount}/5`;
+
+        }
+
+
+        let failureDisplay =
+            word.failCount;
+
+
+        if (isLeech(word)) {
+
+            failureDisplay +=
+                ` <span class="badge leech">PROBLEM</span>`;
+
+        }
+
+
+        const row =
+            document.createElement("tr");
+
+
+        row.innerHTML = `
+
+<td class="kanji-large">${word.kanji}</td>
+
+<td>${word.hiragana}</td>
+
+<td>${word.english}</td>
+
+<td>${word.jlpt}</td>
+
+<td>${word.category}</td>
+
+<td>${progress}</td>
+
+<td>${failureDisplay}</td>
+
+<td>
+
+<button onclick="editWord(${realIndex})">
+Edit
+</button>
+
+<button onclick="deleteWord(${realIndex})">
+Delete
+</button>
+
+</td>
+
+`;
+
+
+        tbody.appendChild(row);
+
+    });
+
+}
+
+
+/* =========================================================
+   CATEGORY FILTER
+========================================================= */
+
+function updateCategoryFilter() {
+
+    const select =
+        document.getElementById("categoryFilter");
+
+    const current = select.value;
+
+    const categories =
+        [...new Set(words.map(word => word.category))]
+        .sort();
+
+    select.innerHTML =
+        `<option value="">All Categories</option>`;
+
+
+    categories.forEach(category => {
+
+        const option =
+            document.createElement("option");
+
+        option.value = category;
+
+        option.textContent = category;
+
+        select.appendChild(option);
+
+    });
+
+
+    select.value = current;
+
+}
+
+
+/* =========================================================
+   DASHBOARD FAILURES
+========================================================= */
+
+function getTopFailures() {
+
+    return [...words]
+
+        .sort((a,b) =>
+            b.failCount - a.failCount
+        )
+
+        .slice(0,10);
+
+}
+
+
+function renderFailureList(elementId) {
+
+    const container =
+        document.getElementById(elementId);
+
+    const top =
+        getTopFailures();
+
+    container.innerHTML = "";
+
+
+    top.forEach((word, index) => {
+
+        if (word.failCount === 0) return;
+
+        const div =
+            document.createElement("div");
+
+        div.className = "history-row";
+
+        div.innerHTML = `
+
+<div>
+
+<strong>${index + 1}. ${word.kanji}</strong>
+
+<br>
+
+${word.hiragana} — ${word.english}
+
+</div>
+
+<div>
+
+❌ ${word.failCount}
+
+</div>
+
+`;
+
+        container.appendChild(div);
+
+    });
+
+
+    if (container.innerHTML === "") {
+
+        container.innerHTML =
+            "No mistakes yet. Great start! 🎉";
+
+    }
+
+}
+
+
+/* =========================================================
+   PROBLEM WORDS
+========================================================= */
+
+function renderLeeches() {
+
+    const container =
+        document.getElementById("leechList");
+
+    const leeches =
+        words.filter(word => isLeech(word));
+
+    container.innerHTML = "";
+
+
+    if (leeches.length === 0) {
+
+        container.innerHTML =
+            "No problem words yet. 🎉";
+
+        return;
+
+    }
+
+
+    leeches.forEach(word => {
+
+        const div =
+            document.createElement("div");
+
+        div.className = "history-row";
+
+        div.innerHTML = `
+
+<div>
+
+<strong>${word.kanji}</strong>
+
+<br>
+
+${word.hiragana} — ${word.english}
+
+</div>
+
+<div>
+
+❌ ${word.failCount}
+
+</div>
+
+`;
+
+        container.appendChild(div);
+
+    });
+
+}
+
+
+/* =========================================================
+   HISTORY
+========================================================= */
+
+function renderHistory() {
+
+    const container =
+        document.getElementById("reviewHistory");
+
+    const dates =
+        Object.keys(stats.reviewHistory)
+        .sort()
+        .reverse()
+        .slice(0,14);
+
+    container.innerHTML = "";
+
+
+    dates.forEach(date => {
+
+        const div =
+            document.createElement("div");
+
+        div.className = "history-row";
+
+        div.innerHTML = `
+
+<span>${date}</span>
+
+<strong>
+${stats.reviewHistory[date]} reviews
+</strong>
+
+`;
+
+        container.appendChild(div);
+
+    });
+
+
+    if (!dates.length) {
+
+        container.innerHTML =
+            "No review history yet.";
+
+    }
+
+}
+
+
+/* =========================================================
+   UPDATE DASHBOARD
+========================================================= */
+
+function updateDashboard() {
+
+    const due =
+        words.filter(isDue).length;
+
+    const burned =
+        words.filter(isBurned).length;
+
+    const leeches =
+        words.filter(isLeech).length;
+
+    const todayReviews =
+        stats.reviewHistory[today()] || 0;
+
+
+    document.getElementById("totalWords")
+        .textContent = words.length;
+
+    document.getElementById("dueWords")
+        .textContent = due;
+
+    document.getElementById("burnedWords")
+        .textContent = burned;
+
+    document.getElementById("failedWords")
+        .textContent = leeches;
+
+    document.getElementById("streak")
+        .textContent = stats.streak;
+
+    document.getElementById("xp")
+        .textContent = stats.xp;
+
+    document.getElementById("todayReviews")
+        .textContent = todayReviews;
+
+    document.getElementById("dailyGoalDisplay")
+        .textContent = DAILY_GOAL;
+
+
+    const percentage =
+        Math.min(
+            100,
+            (todayReviews / DAILY_GOAL) * 100
+        );
+
+
+    document.getElementById("goalProgress")
+        .style.width = percentage + "%";
+
+
+    renderFailureList("dashboardFailures");
+
+    renderHistoryDashboard();
+
+}
+
+
+/* =========================================================
+   DASHBOARD HISTORY
+========================================================= */
+
+function renderHistoryDashboard() {
+
+    const container =
+        document.getElementById("dashboardHistory");
+
+    const dates =
+        Object.keys(stats.reviewHistory)
+        .sort()
+        .reverse()
+        .slice(0,5);
+
+    container.innerHTML = "";
+
+
+    dates.forEach(date => {
+
+        const div =
+            document.createElement("div");
+
+        div.className = "history-row";
+
+        div.innerHTML = `
+
+<span>${date}</span>
+
+<strong>
+${stats.reviewHistory[date]} reviews
+</strong>
+
+`;
+
+        container.appendChild(div);
+
+    });
+
+
+    if (!dates.length) {
+
+        container.innerHTML =
+            "No reviews yet.";
+
+    }
+
+}
+
+
+/* =========================================================
+   STATISTICS
+========================================================= */
+
+function updateStatistics() {
+
+    document.getElementById("statReviews")
+        .textContent = stats.totalReviews;
+
+    document.getElementById("statFailures")
+        .textContent = stats.totalFailures;
+
+    document.getElementById("statBurned")
+        .textContent =
+        words.filter(isBurned).length;
+
+
+    let accuracy = 0;
+
+    if (stats.totalReviews > 0) {
+
+        accuracy =
+            Math.round(
+                stats.successfulReviews /
+                stats.totalReviews *
+                100
+            );
+
+    }
+
+
+    document.getElementById("statAccuracy")
+        .textContent = accuracy + "%";
+
+
+    renderFailureList("topFailures");
+
+    renderLeeches();
+
+    renderHistory();
+
+}
+
+
+/* =========================================================
+   EXPORT
+========================================================= */
+
+function exportData() {
+
+    const backup = {
+
+        words,
+
+        stats,
+
+        settings: {
+
+            dailyGoal: DAILY_GOAL,
+
+            leechLimit: LEECH_LIMIT
+
+        },
+
+        exportedAt:
+            new Date().toISOString()
+
+    };
+
+
+    const blob =
+        new Blob(
+            [JSON.stringify(backup, null, 2)],
+            {
+                type:"application/json"
+            }
+        );
+
+
+    const url =
+        URL.createObjectURL(blob);
+
+
+    const a =
+        document.createElement("a");
+
+    a.href = url;
+
+    a.download =
+        "kanji-srs-backup-" +
+        today() +
+        ".json";
+
+    a.click();
+
+    URL.revokeObjectURL(url);
+
+}
+
+
+/* =========================================================
+   IMPORT
+========================================================= */
+
+function importData(event) {
+
+    const file =
+        event.target.files[0];
+
+    if (!file) return;
+
+
+    const reader =
+        new FileReader();
+
+
+    reader.onload = function(e) {
+
+        try {
+
+            const backup =
+                JSON.parse(e.target.result);
+
+
+            if (!backup.words || !backup.stats) {
+
+                alert(
+                    "This does not look like a valid Kanji SRS backup."
+                );
+
+                return;
+
+            }
+
+
+            if (!confirm(
+                "Import this backup? Your current data will be replaced."
+            )) {
+
+                return;
+
+            }
+
+
+            words = backup.words;
+
+            stats = backup.stats;
+
+
+            saveData();
+
+            updateAll();
+
+            alert("Backup imported successfully!");
+
+        }
+
+        catch(error) {
+
+            alert(
+                "Could not read this backup file."
+            );
+
+        }
+
+    };
+
+
+    reader.readAsText(file);
+
+}
+
+
+/* =========================================================
+   RESET
+========================================================= */
+
+function resetAll() {
+
+    if (!confirm(
+        "WARNING: This will delete ALL vocabulary and progress. Continue?"
+    )) {
+
+        return;
+
+    }
+
+
+    localStorage.removeItem("kanjiWords");
+
+    localStorage.removeItem("kanjiStats");
+
+
+    words =
+        defaultWords.map(word => ({
+
+            ...word,
+
+            correctCount: 0,
+
+            failCount: 0,
+
+            dueDate: today(),
+
+            lastReviewed: null
+
+        }));
+
+
+    stats = {
+
+        totalReviews: 0,
+
+        successfulReviews: 0,
+
+        totalFailures: 0,
+
+        xp: 0,
+
+        reviewHistory: {},
+
+        lastStudyDate: null,
+
+        streak: 0
+
+    };
+
+
+    saveData();
+
+    updateAll();
+
+    alert("Everything has been reset.");
+
+}
+
+
+/* =========================================================
+   UPDATE EVERYTHING
+========================================================= */
+
+function updateAll() {
+
+    updateDashboard();
+
+    updateStatistics();
+
+    updateCategoryFilter();
+
+    renderVocabulary();
+
+}
+
+
+/* =========================================================
+   INITIALISE
+========================================================= */
+
+updateAll();
+
+</script>
+
+
+<script id="answer-reveal-logic">
+(function(){
+  function getRatingButtons(){
+    return Array.from(document.querySelectorAll(
+      'button[onclick*="rateWord"], button[data-rating], .rating button, .rating-buttons button'
+    ));
+  }
+
+  window.lockRatingButtons = function(){
+    getRatingButtons().forEach(function(btn){
+      btn.classList.add("rating-locked");
+      btn.classList.remove("rating-unlocked");
+      btn.setAttribute("aria-disabled","true");
+    });
+  };
+
+  window.unlockRatingButtons = function(){
+    getRatingButtons().forEach(function(btn){
+      btn.classList.remove("rating-locked");
+      btn.classList.add("rating-unlocked");
+      btn.removeAttribute("aria-disabled");
+    });
+  };
+
+  window.showKanjiAnswer = function(){
+    var area = document.getElementById("kanjiAnswer");
+    var button = document.getElementById("showAnswerBtn");
+    if(!area || !button) return;
+
+    // Try the common quiz globals/objects used by the existing app.
+    var word = window.currentWord || window.currentQuizWord || window.quizWord || null;
+
+    if(!word && Array.isArray(window.quizWords) && typeof window.currentQuizIndex === "number"){
+      word = window.quizWords[window.currentQuizIndex];
+    }
+
+    // Fall back to finding the word currently displayed in the page.
+    if(!word && Array.isArray(window.kanjiWords)){
+      var q = document.getElementById("quizKanji") || document.querySelector("[data-quiz-kanji]");
+      if(q && q.textContent.trim()){
+        var shown = q.textContent.trim();
+        word = window.kanjiWords.find(function(w){ return w.kanji === shown || w.hiragana === shown; });
+      }
+    }
+
+    var kanji = word && word.kanji ? word.kanji : "";
+    var hira = word && word.hiragana ? word.hiragana : "";
+    var english = word && (word.english || word.meaning) ? (word.english || word.meaning) : "";
+
+    // If the existing quiz already has a hidden/answer element, use its text as a fallback.
+    if(!kanji){
+      var existing = document.querySelector("#answer, .correct-answer, .quiz-answer, [data-answer]");
+      if(existing) kanji = existing.textContent.trim();
+    }
+
+    area.innerHTML =
+      '<span class="answer-kanji">' + escapeHtml(kanji || "—") + '</span>' +
+      '<span class="answer-meta">' +
+      (english ? escapeHtml(english) : "") +
+      (hira ? (english ? " · " : "") + escapeHtml(hira) : "") +
+      '</span>';
+
+    area.classList.add("visible");
+    button.classList.add("revealed");
+    unlockRatingButtons();
+  };
+
+  function escapeHtml(str){
+    return String(str).replace(/[&<>"']/g,function(c){
+      return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[c];
+    });
+  }
+
+  // Re-lock for each new quiz card. Patch the existing quiz functions without
+  // changing their SRS logic.
+  var oldNextQuiz = window.nextQuiz;
+  if(typeof oldNextQuiz === "function"){
+    window.nextQuiz = function(){
+      var result = oldNextQuiz.apply(this, arguments);
+      setTimeout(window.resetAnswerReveal, 0);
+      return result;
+    };
+  }
+
+  var oldFinishQuiz = window.finishQuiz;
+  if(typeof oldFinishQuiz === "function"){
+    window.finishQuiz = function(){
+      return oldFinishQuiz.apply(this, arguments);
+    };
+  }
+
+  window.resetAnswerReveal = function(){
+    var area = document.getElementById("kanjiAnswer");
+    var button = document.getElementById("showAnswerBtn");
+    if(area){
+      area.classList.remove("visible");
+      area.innerHTML = "";
+    }
+    if(button){
+      button.classList.remove("revealed");
+    }
+    lockRatingButtons();
+  };
+
+  // Start locked.
+  document.addEventListener("DOMContentLoaded", function(){
+    setTimeout(function(){
+      lockRatingButtons();
+    }, 50);
+  });
+
+  // Observe the study area so the lock/reveal resets when the quiz content changes.
+  var observer = new MutationObserver(function(){
+    var area = document.getElementById("kanjiAnswer");
+    if(area && !area.classList.contains("visible")){
+      lockRatingButtons();
+    }
+  });
+  document.addEventListener("DOMContentLoaded", function(){
+    var study = document.getElementById("study");
+    if(study) observer.observe(study, {childList:true, subtree:true});
+  });
+})();
+</script>
+
+</body>
+</html>
